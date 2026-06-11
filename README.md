@@ -84,6 +84,10 @@ For detailed instructions on how to run Docker-based tools inside XNAT (using al
 ## License
 This repository is licensed under the [Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International (CC BY-NC-ND 4.0)](LICENSE). You may use and share the content non-commercially, with proper attribution, but you may not modify or create derivative works.
 
+### Citation ###
+Cite the code: 
+[![DOI](https://zenodo.org/badge/998973151.svg)](https://doi.org/10.5281/zenodo.20642350)
+
 ### Who do I talk to?
 If you have any comment, suggestion, or question, please do contact preclinicaldata@eurobioimaging.eu
 
