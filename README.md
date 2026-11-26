@@ -33,7 +33,7 @@ cd subject && bash build.sh eucaim && bash build.sh xnat
 * **1.0**: first release.
 
 ## Citation
-Cite the code: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20642351.svg)](https://doi.org/10.5281/zenodo.20642351)
+Cite the code: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20642350.svg)](https://doi.org/10.5281/zenodo.20642350)
 
 ## Contact
 preclinicaldata@eurobioimaging.eu
