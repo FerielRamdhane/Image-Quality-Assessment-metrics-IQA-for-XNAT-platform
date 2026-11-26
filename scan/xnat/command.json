@@ -1,0 +1,97 @@
+{
+  "name": "IQA_Scan",
+  "label": "IQA_Scan",
+  "description": "IQA Scan (SNR, SI, MI, Rician noise level), 3D and 4D",
+  "version": "1.1.0",
+  "schema-version": "1.0",
+  "image": "iqaxnat_scan:1.1.0-xnat",
+  "type": "docker",
+  "command-line": "#tools#",
+  "mounts": [
+    {
+      "name": "dicom-in",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "out",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "metrics",
+      "label": "<span style='display:inline-block;width:100px;text-align:center;font-weight:bold;font-size:13px;background-color:#e8f4f8;padding:4px;border-radius:3px;border:1px solid #b8d8e8;margin:2px;'>📊IQA Metrics Selection</span>",
+      "description": "<span style='font-size:13px;font-weight:bold; color:#2d5c7a;'>Select one or more Image Quality Assessment metrics to perform:</span><ul style='font-size:11.5px; font-weight:bold; color:#2d5c7a;'><li><b>snr:</b> Signal-to-Noise Ratio — measures signal quality</li><li><b>si:</b> Sharpness Index — measures image sharpness</li><li><b>mi:</b> Mutual Information — between consecutive slices; for 4D series also each volume against the first</li><li><b>riciannoiselevel:</b> Rician Noise Level — estimates Rician noise in MR images</li></ul>",
+      "type": "select-many",
+      "default-value": "snr",
+      "required": true,
+      "replacement-key": "#tools#",
+      "select-values": [
+        "snr",
+        "si",
+        "mi",
+        "riciannoiselevel"
+      ]
+    }
+  ],
+  "outputs": [
+    {
+      "name": "iqa_output",
+      "description": "Excel and PNG files per metric, IQA_values.csv and IQA_meta.json",
+      "required": true,
+      "mount": "out"
+    }
+  ],
+  "xnat": [
+    {
+      "name": "IQA_Scan",
+      "label": "IQA_Scan",
+      "description": "IQA Scan (3D and 4D)",
+      "contexts": [
+        "xnat:imageScanData"
+      ],
+      "external-inputs": [
+        {
+          "name": "scan",
+          "description": "Input scan",
+          "type": "Scan",
+          "matcher": "'DICOM' in @.resources[*].label",
+          "required": true,
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "scan-dicoms",
+          "description": "The DICOM resource on the scan",
+          "type": "Resource",
+          "matcher": "@.label == 'DICOM'",
+          "required": true,
+          "provides-files-for-command-mount": "dicom-in",
+          "load-children": true,
+          "derived-from-wrapper-input": "scan",
+          "multiple": false
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "IQAresource",
+          "accepts-command-output": "iqa_output",
+          "as-a-child-of": "scan",
+          "type": "Resource",
+          "label": "IQA_Results",
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "container-labels": {},
+  "generic-resources": {},
+  "ulimits": {},
+  "secrets": [],
+  "visibility": "public"
+}

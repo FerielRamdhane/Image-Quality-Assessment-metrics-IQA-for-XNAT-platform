@@ -1,0 +1,122 @@
+{
+  "name": "IQA_Subject_Level",
+  "label": "IQA_Subject_Level",
+  "description": "IQA Subject Level (all scans of the session, 3D and 4D)",
+  "version": "1.1.0",
+  "schema-version": "1.0",
+  "image": "iqaxnat_subject:1.1.0-xnat",
+  "type": "docker",
+  "command-line": "#tools# --session #session_label#",
+  "mounts": [
+    {
+      "name": "dicom-in",
+      "writable": false,
+      "path": "/input"
+    },
+    {
+      "name": "out",
+      "writable": true,
+      "path": "/output"
+    }
+  ],
+  "environment-variables": {},
+  "ports": {},
+  "inputs": [
+    {
+      "name": "metrics",
+      "description": "Select one or more IQA metrics: snr, si, mi (consecutive slices; for 4D scans each volume against the first), riciannoiselevel (MRI only)",
+      "type": "select-many",
+      "default-value": "snr",
+      "required": true,
+      "replacement-key": "#tools#",
+      "select-values": [
+        "snr",
+        "si",
+        "mi",
+        "riciannoiselevel"
+      ]
+    },
+    {
+      "name": "session_label",
+      "description": "Session label used as output folder and filename suffix",
+      "type": "string",
+      "default-value": "SubjectLevel",
+      "required": false,
+      "replacement-key": "#session_label#",
+      "select-values": []
+    }
+  ],
+  "outputs": [
+    {
+      "name": "iqa_output",
+      "description": "Excel summaries per metric, PNG per scan, IQA_subject_values.csv and IQA_subject_meta.json",
+      "required": true,
+      "mount": "out"
+    }
+  ],
+  "xnat": [
+    {
+      "name": "IQA_Subject_Level",
+      "label": "IQA_Subject_Level",
+      "description": "IQA Subject Level",
+      "contexts": [
+        "xnat:imageSessionData"
+      ],
+      "external-inputs": [
+        {
+          "name": "session",
+          "description": "Input session",
+          "type": "Session",
+          "required": true,
+          "provides-files-for-command-mount": "dicom-in",
+          "load-children": true
+        }
+      ],
+      "derived-inputs": [
+        {
+          "name": "subject",
+          "description": "Subject derived from session",
+          "type": "Subject",
+          "required": true,
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "multiple": false
+        },
+        {
+          "name": "session_label",
+          "description": "Session label derived from session",
+          "type": "string",
+          "required": false,
+          "provides-value-for-command-input": "session_label",
+          "load-children": true,
+          "derived-from-wrapper-input": "session",
+          "derived-from-xnat-object-property": "label",
+          "multiple": false
+        }
+      ],
+      "output-handlers": [
+        {
+          "name": "IQAresource_session",
+          "accepts-command-output": "iqa_output",
+          "as-a-child-of": "session",
+          "type": "Resource",
+          "label": "IQA_Results",
+          "tags": []
+        },
+        {
+          "name": "IQAresource_subject",
+          "accepts-command-output": "iqa_output",
+          "as-a-child-of": "subject",
+          "type": "Resource",
+          "label": "IQA_Results",
+          "tags": []
+        }
+      ]
+    }
+  ],
+  "container-labels": {},
+  "generic-resources": {},
+  "ulimits": {},
+  "secrets": [],
+  "visibility": "public"
+}
